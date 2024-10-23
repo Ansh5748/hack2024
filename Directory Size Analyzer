@@ -1,0 +1,60 @@
+import os
+
+def get_size(path):
+    """
+    Recursively calculates the total size of a directory or file.
+
+    Args:
+        path (str): The path to the directory or file.
+
+    Returns:
+        int: The total size in bytes.
+    """
+    total_size = 0
+
+    if os.path.isfile(path):
+        total_size = os.path.getsize(path)
+    else:
+        for dirpath, dirnames, filenames in os.walk(path):
+            for f in filenames:
+                fp = os.path.join(dirpath, f)
+                total_size += os.path.getsize(fp)
+
+    return total_size
+
+def format_size(size_in_bytes):
+    """
+    Converts a size in bytes to a human-readable format (KB, MB, GB, etc.).
+
+    Args:
+        size_in_bytes (int): The size in bytes.
+
+    Returns:
+        str: The size in a human-readable format.
+    """
+    for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+        if size_in_bytes < 1024:
+            return f"{size_in_bytes:.2f} {unit}"
+        size_in_bytes /= 1024
+
+def analyze_directory(directory):
+    """
+    Analyzes the size of each subdirectory and file in the given directory.
+
+    Args:
+        directory (str): The path to the directory to analyze.
+
+    Returns:
+        None
+    """
+    print(f"Analyzing directory: {directory}\n")
+    
+    # List all subdirectories and files
+    for item in os.listdir(directory):
+        item_path = os.path.join(directory, item)
+        size = get_size(item_path)
+        print(f"{item}: {format_size(size)}")
+
+if __name__ == "__main__":
+    directory_to_analyze = './'  # Replace with your target directory
+    analyze_directory(directory_to_analyze)
